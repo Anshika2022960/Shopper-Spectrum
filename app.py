@@ -12,12 +12,11 @@ st.set_page_config(
 def load_files():
     scaler = pickle.load(open("scaler.pkl", "rb"))
     kmeans = pickle.load(open("kmeans_model.pkl", "rb"))
-    similarity_df = pickle.load(open("similarity_df.pkl", "rb"))
+    top5_recommendations = pickle.load(open("top5_recommendations.pkl", "rb"))
     cluster_mapping = pickle.load(open("cluster_mapping.pkl", "rb"))
     product_names = pickle.load(open("product_names.pkl", "rb"))
-    return scaler, kmeans, similarity_df, cluster_mapping, product_names
-
-scaler, kmeans, similarity_df, cluster_mapping, product_names = load_files()
+    return scaler, kmeans, cluster_mapping, product_names, top5_recommendations
+scaler, kmeans, cluster_mapping, product_names, top5_recommendations = load_files()
 
 st.markdown("""
 <style>
@@ -211,8 +210,7 @@ elif menu == "🛍️ Product Recommendation":
                     st.write(product_names[:40])
             else:
                 original_product = products_dict[product_name_clean]
-                recommendations = similarity_df[original_product].sort_values(ascending=False)[1:6]
-
+                recommendations = top5_recommendations[original_product]
                 st.success(f"Top 5 recommendations for: {original_product}")
 
                 for i, (product, score) in enumerate(recommendations.items(), start=1):
